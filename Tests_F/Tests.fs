@@ -11,4 +11,4 @@ type FTests () =
 
     [<TestMethod>]
     member this.LazyFNameTest () =
-        Assert.IsTrue(LazyF.Equals("Thomas McKirbster"));
+        Assert.IsTrue(LazyF.Equals("Thomas, McKirbster"));
