@@ -3,6 +3,8 @@ namespace Concurrency.F
 open System
 open System.Collections.Generic
 open System.Threading.Tasks
+open FSharp.Collections.ParallelSeq
+open System.Linq
 
 type Person (firstName: string, lastName: string) =
     member this.FirstName = firstName
@@ -13,6 +15,25 @@ type FList<'a> =
     | Empty   
     | Cons of head:'a * tail:FList<'a>   
 
+
+
+type AsyncRetryBuilder(max, sleepMilliseconds : int) =
+    let rec retry n (task:Async<'a>) (continuation:'a -> Async<'b>) = 
+        async { 
+            try 
+                let! result = task   
+                let! conResult = continuation result   
+                return conResult
+            with error ->
+                if n = 0 then return raise error   
+                else
+                    do! Async.Sleep sleepMilliseconds   
+                    return! retry (n - 1) task continuation }
+   
+   
+    member x.ReturnFrom(f) = f   
+
+    member x.Return(v) = async { return v } 
 
 
 module F_Library =
@@ -96,4 +117,30 @@ module F_Library =
                     | Mul -> lRes * rRes
                     | Div -> lRes / rRes
                     | Pow -> System.Math.Pow(lRes, rRes)
+
+
+
+    let reduceF R (reduce:'key -> seq<'value> -> 'reducedValues) (inputs:('key * seq<'key * 'value>) seq) =
+        inputs 
+        |> PSeq.withExecutionMode ParallelExecutionMode.ForceParallelism   
+        |> PSeq.withDegreeOfParallelism R   
+        |> PSeq.map (fun (key, items) ->  items 
+                                       |> Seq.map (snd)   
+                                       |> reduce key)   
+                                       |> PSeq.toList
+
+
+module Result =
+ let ofChoice value =
+            match value with
+            | Choice1Of2 value -> Ok value
+            | Choice2Of2 e -> Error e
+
+module AsyncResult = 
+      let handler (operation:Async<'a>) : AsyncResult<'a> = 
+        async {
+        let! result = Async.Catch operation
+        return (Result.ofChoice result) 
+        }
+
     
