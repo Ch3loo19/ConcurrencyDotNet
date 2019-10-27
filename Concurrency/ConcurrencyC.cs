@@ -12,19 +12,33 @@ namespace Concurrency.C
 {
     public static class ConcurrencyC
     {
+
+        public static void DangerSharedVariableClosure()
+        {
+            var tasks = new Task[10];
+            for (int iteration = 0; iteration < 10; iteration++)
+            {
+                // Wrong solution to make it behave...
+                //Thread.Sleep(2000);
+                tasks[iteration] = Task.Run(() => Console.WriteLine("{0} - {1}", Thread.CurrentThread.ManagedThreadId, iteration));
+            }
+            Task.WaitAll(tasks);
+        }
+
+
         public static IDictionary<string, Person> GetMeADictionaryPlease()
         {
             var aDictionary = new Dictionary<string, Person>().ToImmutableDictionary();
             return aDictionary;
         }
 
-        
+
         /// <summary>
         /// Parallel for with a shared, mutable variable, 'total' -> define a tlsValue that is used by each thread and aggregate at and in interlocked
         /// </summary>
         public static void DoSomething()
         {
-            long  total = 0;
+            long total = 0;
             int len = 1000000;
             Parallel.For(0, len,
                 () => 0,
@@ -42,7 +56,7 @@ namespace Concurrency.C
             return true;
         }
 
-        static Task ForEachAsync<T>(this IEnumerable<T> source,int maxDegreeOfParallelism, Func<T, Task> body)
+        static Task ForEachAsync<T>(this IEnumerable<T> source, int maxDegreeOfParallelism, Func<T, Task> body)
         {
             return Task.WhenAll(
                 from partition in Partitioner.Create(source).GetPartitions(maxDegreeOfParallelism)
@@ -55,6 +69,37 @@ namespace Concurrency.C
         }
 
     }
+
+    public class MyFirstDeadlock
+    {
+        private object _lock1 = new object();
+        private object _lock2 = new object();
+
+        public Thread threadWriter1 => new Thread(() =>
+        {
+            lock (_lock1)
+            {
+                Thread.Sleep(1000);
+                lock (_lock2)
+                {
+                    Console.WriteLine("This was thread1");
+                }
+            }
+        });
+
+        public Thread threadWriter2 => new Thread(() =>
+        {
+            lock (_lock2)
+            {
+                Thread.Sleep(1000);
+                lock (_lock1)
+                {
+                    Console.WriteLine("This was thread2");
+                }
+            }
+        });
+    }
+
 
 
     //To showcase ImmutableInterlocked.TryAdd works - p.67
@@ -93,4 +138,5 @@ namespace Concurrency.C
 
         }
     }
+
 }
