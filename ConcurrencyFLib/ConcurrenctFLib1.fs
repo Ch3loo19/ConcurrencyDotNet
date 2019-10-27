@@ -136,11 +136,11 @@ module Result =
             | Choice1Of2 value -> Ok value
             | Choice2Of2 e -> Error e
 
-module AsyncResult = 
-      let handler (operation:Async<'a>) : AsyncResult<'a> = 
-        async {
-        let! result = Async.Catch operation
-        return (Result.ofChoice result) 
-        }
+//module AsyncResult = 
+//      let handler (operation:Async<'a>) : AsyncResult<'a> = 
+//        async {
+//        let! result = Async.Catch operation
+//        return (Result.ofChoice result) 
+//        }
 
     
