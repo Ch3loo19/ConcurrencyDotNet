@@ -9,4 +9,8 @@
     <ProjectReference Include="..\ConcurrencyFLib\ConcurrencyFLib.fsproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="AdditionalInfo\SlidesDesu\" />
+  </ItemGroup>
+
 </Project>
