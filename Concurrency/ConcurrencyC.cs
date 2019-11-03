@@ -33,26 +33,60 @@ namespace Concurrency.C
         }
 
 
-        /// <summary>
-        /// Parallel for with a shared, mutable variable, 'total' -> define a tlsValue that is used by each thread and aggregate at and in interlocked
-        /// </summary>
-        public static void DoSomething()
+              public static double SumFtw (int len)
         {
             long total = 0;
-            int len = 1000000;
-            Parallel.For(0, len,
-                () => 0,
-                (int i, ParallelLoopState loopState, long tlsValue) =>
-                {
-                    return IsPrime(i) ? tlsValue += i : tlsValue;
-                },
-                value => Interlocked.Add(ref total, value));
 
+            for (int i = 1; i < len; i++)
+            {
+                total = IsPrime(i) ? total + i : total;
+            }
+
+            return total;
+        }
+
+        public static double  ParalleliseFtw(int len)
+        {
+            long total = 0;
+            Parallel.For(1, len, i =>
+             {
+                 total = IsPrime(i) ? total + i : total;
+             });
+            return total;
+        }
+
+        public static double ParalliliseWithGlobalLockOnSharedMutableVariable(int len)
+        {
+            long total = 0;
+            Parallel.For(1, len, i =>
+            {
+                Interlocked.Add(ref total, IsPrime(i) ? i : 0);                 
+            });
+            return total;
 
         }
 
-        private static bool IsPrime(int i)
+        public static double ParalliliseWithSharedMutableVariableAndLocalLock(int len)
         {
+            long total = 0;
+            Parallel.For(1, len,
+               () => 0,
+               (int i, ParallelLoopState loopState, long tlsValue) =>
+               {
+                  return IsPrime(i) ? tlsValue += i : tlsValue;
+               },
+               value => Interlocked.Add(ref total, value));
+            return total;
+
+        }
+
+        private static bool IsPrime(int n)
+        {
+            if (n == 1) return false;
+            if (n == 2) return true;
+            var boundary = (int)Math.Floor(Math.Sqrt(n));
+            for (int i = 2; i <= boundary; ++i)
+                if (n % i == 0) return false;
             return true;
         }
 
