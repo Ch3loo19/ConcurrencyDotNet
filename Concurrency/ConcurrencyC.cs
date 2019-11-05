@@ -33,7 +33,7 @@ namespace Concurrency.C
         }
 
 
-              public static double SumFtw (int len)
+        public static double SumFtw(int len)
         {
             long total = 0;
 
@@ -45,7 +45,7 @@ namespace Concurrency.C
             return total;
         }
 
-        public static double  ParalleliseFtw(int len)
+        public static double ParalleliseFtw(int len)
         {
             long total = 0;
             Parallel.For(1, len, i =>
@@ -60,7 +60,7 @@ namespace Concurrency.C
             long total = 0;
             Parallel.For(1, len, i =>
             {
-                Interlocked.Add(ref total, IsPrime(i) ? i : 0);                 
+                Interlocked.Add(ref total, IsPrime(i) ? i : 0);
             });
             return total;
 
@@ -73,7 +73,7 @@ namespace Concurrency.C
                () => 0,
                (int i, ParallelLoopState loopState, long tlsValue) =>
                {
-                  return IsPrime(i) ? tlsValue += i : tlsValue;
+                   return IsPrime(i) ? tlsValue += i : tlsValue;
                },
                value => Interlocked.Add(ref total, value));
             return total;
@@ -88,6 +88,40 @@ namespace Concurrency.C
             for (int i = 2; i <= boundary; ++i)
                 if (n % i == 0) return false;
             return true;
+        }
+
+        public static double NonThreadSafeSum(int[] range)
+        {
+            double total = 0;
+            int length = range.Count();
+
+            for (int i = 0; i < length; i++)
+            {
+                total += IsPrime(range[i]) ? range[i] : 0;
+            }
+
+            return total;
+        }
+
+        public static double ThreadSafeSum(int[] range) => range.Where(o => IsPrime(o)).Sum();
+
+        public static int[] ModifyData (int[] range)
+        {
+            int length = range.Count();
+            for (int i = 0; i < length; i++)
+            {
+                range[i] = IsPrime(range[i]) ? range[i] : 2;
+            }
+            return range;
+
+        }
+
+        public static double PlinqSum(int[] data) => data.AsParallel().Where(o => IsPrime(o)).Sum();
+
+        public static double PlinqPartitionerSum(int[] data)
+        {
+            var partitioner = Partitioner.Create(data, true);
+            return partitioner.AsParallel().Where(o => IsPrime(o)).Sum();
         }
 
         static Task ForEachAsync<T>(this IEnumerable<T> source, int maxDegreeOfParallelism, Func<T, Task> body)
