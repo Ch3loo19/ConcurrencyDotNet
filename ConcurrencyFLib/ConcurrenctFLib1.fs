@@ -4,6 +4,7 @@ open System
 open System.Collections.Generic
 open System.Threading.Tasks
 open FSharp.Collections.ParallelSeq
+open System.Threading
 open System.Linq
 
 type Person (firstName: string, lastName: string) =
@@ -37,6 +38,13 @@ type AsyncRetryBuilder(max, sleepMilliseconds : int) =
 
 
 module F_Library =
+
+    let DoSharedVariableClosureCorrectly =
+        let tasks = Array.zeroCreate<Task> 10    
+        for index = 0 to 9 do
+            tasks.[index] <- Task.Run(fun () -> printf "%i - %i%s" Thread.CurrentThread.ManagedThreadId index Environment.NewLine)
+        Task.WhenAll tasks
+            
     let LazyF =
         let kibsterFunction = lazy (Person( "Thomas", "McKirbster"))
         kibsterFunction.Force().FullName
