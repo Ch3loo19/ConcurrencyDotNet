@@ -63,16 +63,16 @@ namespace Concurrency
             //Console.WriteLine(sum.Result);
 
             //+ Partitioning
-            var data = Enumerable.Range(1, 200000).ToArray();
-            var sw = new Stopwatch();
+            //var data = Enumerable.Range(1, 200000).ToArray();
+            //var sw = new Stopwatch();
 
-            sw.Start();
-            double sum = ConcurrencyC.PlinqSum(data);
-            Console.WriteLine($"Sum equals to {sum}, calck'd in {sw.ElapsedMilliseconds} miliseconds");
+            //sw.Start();
+            //double sum = ConcurrencyC.PlinqSum(data);
+            //Console.WriteLine($"Sum equals to {sum}, calck'd in {sw.ElapsedMilliseconds} miliseconds");
 
-            sw.Restart();
-            sum = ConcurrencyC.PlinqPartitionerSum(data);
-            Console.WriteLine($"Sum equals to {sum}, calck'd in {sw.ElapsedMilliseconds} miliseconds");
+            //sw.Restart();
+            //sum = ConcurrencyC.PlinqPartitionerSum(data);
+            //Console.WriteLine($"Sum equals to {sum}, calck'd in {sw.ElapsedMilliseconds} miliseconds");
 
             //...
             //Partitioner.Create method, which takes as an argument the data source and a flag 
@@ -82,6 +82,10 @@ namespace Concurrency
             //Dynamic partitioning aims to load balance the work between tasks by assigning an arbitrary size of chunks 
             //and then incrementally expanding the length after each iteration.
             //It’s possible to build sophisticated partitioners(http://mng.bz/48UP) with complex strategies. 
+
+            //+ Task and Functional Composition
+            ConcurrencyC.FunctionalTaskExample(101);
+
 
             Console.ReadLine();
 

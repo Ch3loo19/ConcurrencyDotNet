@@ -105,7 +105,7 @@ namespace Concurrency.C
 
         public static double ThreadSafeSum(int[] range) => range.Where(o => IsPrime(o)).Sum();
 
-        public static int[] ModifyData (int[] range)
+        public static int[] ModifyData(int[] range)
         {
             int length = range.Count();
             for (int i = 0; i < length; i++)
@@ -124,6 +124,43 @@ namespace Concurrency.C
             return partitioner.AsParallel().Where(o => IsPrime(o)).Sum();
         }
 
+
+        public static Unit FunctionalTaskExample(int notionalVal)
+        {
+            var notionalTask = notionalVal.ReturnTask();
+            var bindingFunc = new Func<int, Task<bool>>(o => Task.Run(() => IsPrime(o)));
+
+            // here just to showcase
+            var checkNumberIsPrime = notionalTask.Bind(bindingFunc);
+            checkNumberIsPrime.Wait();
+
+            var compositionFunc = new Func<bool, Task<Unit>>(o => Task.Run(() => PrintPrimalityOfNumber(o)));
+            var printWhetherNumberIsPrime = bindingFunc.Compose(compositionFunc);
+
+            var writeTask = printWhetherNumberIsPrime(notionalVal);
+            writeTask.Wait();
+            
+            return writeTask.Result;
+        }
+
+
+
+
+        public static Task<T> ReturnTask<T>(this T val) => F_Library.Return(val);
+
+        public static Task<R> Bind<T, R>(this Task<T> t, Func<T, Task<R>> k) => F_Library.Bind(t, k);
+
+        public static Func<A, Task<C>> Compose<A, B, C>(this Func<A, Task<B>> f, Func<B, Task<C>> g) => F_Library.Compose(f, g);
+
+        static Unit PrintPrimalityOfNumber(bool isPrime)
+        {
+            string message = isPrime ? "The number is Prime" : "The number ins't prime";
+            Console.WriteLine(message);
+
+            return Unit.Default;
+        }
+
+
         static Task ForEachAsync<T>(this IEnumerable<T> source, int maxDegreeOfParallelism, Func<T, Task> body)
         {
             return Task.WhenAll(
@@ -135,6 +172,8 @@ namespace Concurrency.C
                             await body(partition.Current);
                 }));
         }
+
+
 
     }
 
@@ -168,6 +207,17 @@ namespace Concurrency.C
         });
     }
 
+    public struct Unit : IEquatable<Unit>
+    {
+        public static readonly Unit Default = new Unit();
+        public override int GetHashCode() => 0;
+        public override bool Equals(object obj) => obj is Unit;
+        public override string ToString() => "()";
+
+        public bool Equals(Unit other) => true;
+        public static bool operator ==(Unit lhs, Unit rhs) => true;
+        public static bool operator !=(Unit lhs, Unit rhs) => false;
+    }
 
 
     //To showcase ImmutableInterlocked.TryAdd works - p.67
