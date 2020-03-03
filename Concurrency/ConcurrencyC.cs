@@ -19,7 +19,7 @@ namespace Concurrency.C
             for (int iteration = 0; iteration < 10; iteration++)
             {
                 // Wrong solution to make it behave...
-                //Thread.Sleep(2000);
+               //Thread.Sleep(1000);
                 tasks[iteration] = Task.Run(() => Console.WriteLine("{0} - {1}", Thread.CurrentThread.ManagedThreadId, iteration));
             }
             Task.WaitAll(tasks);
@@ -50,7 +50,7 @@ namespace Concurrency.C
             long total = 0;
             Parallel.For(1, len, i =>
              {
-                 total = IsPrime(i) ? total + i : total;
+                 total += IsPrime(i) ?  i : 0;
              });
             return total;
         }
@@ -123,12 +123,12 @@ namespace Concurrency.C
 
         }
 
-        public static double PlinqSum(double[] data) => data.AsParallel().Where(o => IsPrime(o)).Sum();
+        public static double PlinqSum(double[] data) => data.AsParallel().Where(IsPrime).Sum();
 
         public static double PlinqPartitionerSum(double[] data)
         {
             var partitioner = Partitioner.Create(data, true);
-            return partitioner.AsParallel().Where(o => IsPrime(o)).Sum();
+            return partitioner.AsParallel().Where(IsPrime).Sum();
         }
 
 

@@ -87,7 +87,7 @@ namespace Concurrency
 
             //+ Task and Functional Composition
             //ConcurrencyC.FunctionalTaskExample(1023941);
-            
+
             Console.ReadLine();
 
         }
