@@ -86,7 +86,7 @@ namespace Concurrency
             //It’s possible to build sophisticated partitioners(http://mng.bz/48UP) with complex strategies. 
 
             //+ Task and Functional Composition
-            //ConcurrencyC.FunctionalTaskExample(1023941);
+            ConcurrencyC.FunctionalTaskExample(1023942);
 
             Console.ReadLine();
 

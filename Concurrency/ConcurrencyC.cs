@@ -135,14 +135,14 @@ namespace Concurrency.C
         public static Unit FunctionalTaskExample(int notionalVal)
         {
             var notionalTask = notionalVal.ReturnTask();
-            var bindingFunc = new Func<int, Task<bool>>(o => Task.Run(() => IsPrime(o)));
+            var checkNumberIsPrimeFunc = new Func<int, Task<bool>>(o => Task.Run(() => IsPrime(o)));
 
             // here just to showcase
-            var checkNumberIsPrime = notionalTask.Bind(bindingFunc);
+            var checkNumberIsPrime = notionalTask.Bind(checkNumberIsPrimeFunc);
             checkNumberIsPrime.Wait();
 
-            var compositionFunc = new Func<bool, Task<Unit>>(o => Task.Run(() => PrintPrimalityOfNumber(o)));
-            var printWhetherNumberIsPrime = bindingFunc.Compose(compositionFunc);
+            var writeWhetherNumberIsPrimeFunc = new Func<bool, Task<Unit>>(o => Task.Run(() => PrintPrimalityOfNumber(o)));
+            var printWhetherNumberIsPrime = checkNumberIsPrimeFunc.Compose(writeWhetherNumberIsPrimeFunc);
 
             var writeTask = printWhetherNumberIsPrime(notionalVal);
             writeTask.Wait();
