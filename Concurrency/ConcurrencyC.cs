@@ -19,7 +19,7 @@ namespace Concurrency.C
             for (int iteration = 0; iteration < 10; iteration++)
             {
                 // Wrong solution to make it behave...
-               //Thread.Sleep(1000);
+               // Thread.Sleep(2000);
                 tasks[iteration] = Task.Run(() => Console.WriteLine("{0} - {1}", Thread.CurrentThread.ManagedThreadId, iteration));
             }
             Task.WaitAll(tasks);

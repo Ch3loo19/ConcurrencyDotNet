@@ -1,15 +1,21 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28307.572
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30907.101
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Concurrency", "Concurrency\Concurrency.csproj", "{94D4BC6B-AEF0-4528-9387-C4A44B202024}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "ConcurrencyFLib", "ConcurrencyFLib\ConcurrencyFLib.fsproj", "{9A03C4AD-A373-471B-AEA5-D65C48ADC5F8}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "ConcurrencyFLib", "ConcurrencyFLib\ConcurrencyFLib.fsproj", "{9A03C4AD-A373-471B-AEA5-D65C48ADC5F8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests_C", "Tests_C\Tests_C.csproj", "{36546081-8248-437D-8EB4-51C5776FC8A6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tests_C", "Tests_C\Tests_C.csproj", "{36546081-8248-437D-8EB4-51C5776FC8A6}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Tests_F", "Tests_F\Tests_F.fsproj", "{E1E4F574-2945-48AF-B505-DAB43DDFA78C}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Tests_F", "Tests_F\Tests_F.fsproj", "{E1E4F574-2945-48AF-B505-DAB43DDFA78C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{2B27BEE7-76B5-4A29-9E2F-A5B18114F15D}"
+	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
+		README.md = README.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

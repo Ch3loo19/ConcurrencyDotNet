@@ -12,22 +12,24 @@ namespace Concurrency
     {
         static void Main(string[] args)
         {
-            //+ Danger Shared Variable + Closure
+            //+ 1a) Danger: Shared Variable + Closure in C#. 
             //var task = new Task(() => ConcurrencyC.DangerSharedVariableClosure());
             //task.RunSynchronously();
 
             //Console.WriteLine($"{Environment.NewLine}*************************************{Environment.NewLine}");
 
-            //// Overcoming this in F#
+            //+ 1b) Overcoming this problem in F#
             //task = new Task(() => { _ = F_Library.DoSharedVariableClosureCorrectly; });
             //task.RunSynchronously();
+            //! Although the code looks structurally the same, F# guarantees immutability.
+            // So, in the case of variable closures, they cannot be mutated by subsequent iterations
 
-            //+ Danger deadlocking
+            //+ 2) Danger: deadlocking
             //var deadlockAgent = new MyFirstDeadlock();
             //deadlockAgent.threadWriter1.Start();
             //deadlockAgent.threadWriter2.Start();
 
-            //+ Parallelising over shared variables 
+            //+ 3) Danger: Parallelising over shared variables 
             //double isPrimeSum;
             //var maxNum = 10000000;
             //Stopwatch sw = new Stopwatch();
@@ -38,43 +40,46 @@ namespace Concurrency
             //Console.WriteLine($"Sequential sum = {isPrimeSum}, calculated in {sw.ElapsedMilliseconds}");
 
             //sw.Restart();
+            ////!Notice non - determinism when re-run and by comparing with sequential sum
             //isPrimeSum = ConcurrencyC.ParalleliseFtw(maxNum);
             //Console.WriteLine($"ParalleliseFtw sum = {isPrimeSum}, calculated in {sw.ElapsedMilliseconds}");
 
             //sw.Restart();
+            ////! Overcoming this problem with a global lock 
             //isPrimeSum = ConcurrencyC.ParalliliseWithGlobalLockOnSharedMutableVariable(maxNum);
             //Console.WriteLine($"ParalleliseWithGlobalLock sum = {isPrimeSum}, calculated in {sw.ElapsedMilliseconds}");
 
             //sw.Restart();
+            ////! Overcoming this problem with a local lock 
             //isPrimeSum = ConcurrencyC.ParalliliseWithSharedMutableVariableAndLocalLock(maxNum);
             //Console.WriteLine($"ParalliliseWithSharedMutableVariableAndLocalLock sum = {isPrimeSum}, calculated in {sw.ElapsedMilliseconds}");
 
-            //+ Dangers of Unknown variable sharing
+            //+ 4) Dangers of Unknown variable sharing
+            //! Even if sum is not done in parallel, the danger of using mutating data is still there if another part of the app is writing on that data
             //var data = Enumerable.Range(1, 1000).ToArray();
-
             //var sum = Task.Run(() => ConcurrencyC.NonThreadSafeSum(data));
             //var modifyData = Task.Run(() => ConcurrencyC.ModifyData(data));
             //Task.WaitAll(sum, modifyData);
             //Console.WriteLine("The sum of prime numbers is " + sum.Result);
 
+            //! The reason this produces deterministic results is because the functional programming style uses a immutable copy of the original data
             //var data = Enumerable.Range(1, 1000).ToArray();
-
             //var sum = Task.Run(() => ConcurrencyC.ThreadSafeSum(data));
             //var modifyData = Task.Run(() => ConcurrencyC.ModifyData(data));
             //Task.WaitAll(sum, modifyData);
             //Console.WriteLine("The sum of prime numbers is " + sum.Result);
 
-            //+ Partitioning
-            //var data = Enumerable.Range(1, 2500000).Select(Convert.ToDouble).ToArray();
+            //+ 5) Partitioning - parrallelisaiton speed-up
+            //var data = Enumerable.Range(1, 9000000).Select(Convert.ToDouble).ToArray();
             //var sw = new Stopwatch();
 
             //sw.Start();
             //double sum = ConcurrencyC.PlinqSum(data);
-            //Console.WriteLine($"Sum equals to {sum}, calck'd in {sw.ElapsedMilliseconds} miliseconds");
+            //Console.WriteLine($"Plinq without partitioner sum equals to {sum}, calck'd in {sw.ElapsedMilliseconds} miliseconds");
 
             //sw.Restart();
             //sum = ConcurrencyC.PlinqPartitionerSum(data);
-            //Console.WriteLine($"Sum equals to {sum}, calck'd in {sw.ElapsedMilliseconds} miliseconds");
+            //Console.WriteLine($"Plinq without partitioner sum equals to {sum}, calck'd in {sw.ElapsedMilliseconds} miliseconds");
 
             //...
             //Partitioner.Create method, which takes as an argument the data source and a flag 
@@ -85,7 +90,7 @@ namespace Concurrency
             //and then incrementally expanding the length after each iteration.
             //It’s possible to build sophisticated partitioners(http://mng.bz/48UP) with complex strategies. 
 
-            //+ Task and Functional Composition
+            //+ 6) Task and Functional Composition
             ConcurrencyC.FunctionalTaskExample(1023942);
 
             Console.ReadLine();
