@@ -19,7 +19,7 @@ namespace Concurrency
             //Console.WriteLine($"{Environment.NewLine}*************************************{Environment.NewLine}");
 
             //+ 1b) Overcoming this problem in F#
-            //task = new Task(() => { _ = F_Library.DoSharedVariableClosureCorrectly; });
+            //var task = new Task(() => { _ = F_Library.DoSharedVariableClosureCorrectly; });
             //task.RunSynchronously();
             //! Although the code looks structurally the same, F# guarantees immutability.
             // So, in the case of variable closures, they cannot be mutated by subsequent iterations
@@ -79,7 +79,7 @@ namespace Concurrency
 
             //sw.Restart();
             //sum = ConcurrencyC.PlinqPartitionerSum(data);
-            //Console.WriteLine($"Plinq without partitioner sum equals to {sum}, calck'd in {sw.ElapsedMilliseconds} miliseconds");
+            //Console.WriteLine($"Plinq with partitioner sum equals to {sum}, calck'd in {sw.ElapsedMilliseconds} miliseconds");
 
             //...
             //Partitioner.Create method, which takes as an argument the data source and a flag 
@@ -90,8 +90,9 @@ namespace Concurrency
             //and then incrementally expanding the length after each iteration.
             //It’s possible to build sophisticated partitioners(http://mng.bz/48UP) with complex strategies. 
 
-            //+ 6) Task and Functional Composition
-            ConcurrencyC.FunctionalTaskExample(1023942);
+            //+ 6) Task and Functional Composition - Printing whether number is prime - Using Task composition and F#
+            //! This is an over-engineered algorithm which prints whether a number is prime.
+            ConcurrencyC.FunctionalTaskExample(1023943);
 
             Console.ReadLine();
 

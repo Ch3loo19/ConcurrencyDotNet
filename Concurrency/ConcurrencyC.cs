@@ -19,18 +19,12 @@ namespace Concurrency.C
             for (int iteration = 0; iteration < 10; iteration++)
             {
                 // Wrong solution to make it behave...
-               // Thread.Sleep(2000);
+                // Thread.Sleep(2000);
                 tasks[iteration] = Task.Run(() => Console.WriteLine("{0} - {1}", Thread.CurrentThread.ManagedThreadId, iteration));
             }
             Task.WaitAll(tasks);
         }
 
-
-        public static IDictionary<string, Person> GetMeADictionaryPlease()
-        {
-            var aDictionary = new Dictionary<string, Person>().ToImmutableDictionary();
-            return aDictionary;
-        }
 
 
         public static double SumFtw(int len)
@@ -50,7 +44,7 @@ namespace Concurrency.C
             long total = 0;
             Parallel.For(1, len, i =>
              {
-                 total += IsPrime(i) ?  i : 0;
+                 total += IsPrime(i) ? i : 0;
              });
             return total;
         }
@@ -146,7 +140,7 @@ namespace Concurrency.C
 
             var writeTask = printWhetherNumberIsPrime(notionalVal);
             writeTask.Wait();
-            
+
             return writeTask.Result;
         }
 
@@ -227,41 +221,7 @@ namespace Concurrency.C
     }
 
 
-    //To showcase ImmutableInterlocked.TryAdd works - p.67
-
-    // CAS (compare and swap) mechanism
-    // Implementing atomisation; T needs to immutable. e.g. Immutable List or Dictionary
-    // The compiler, the runtime system, and even hardware may rearrange reads and writes to memory locations for performance reasons. 
-    // Fields that are declared volatile are not subject to these optimizations. 
-    // Adding the volatile modifier ensures that all threads will observe volatile writes performed by any other thread in the order in which they were performed.
-    public sealed class Atom<T> where T : class
-    {
-        public Atom(T value)
-        {
-            _value = value;
-        }
 
 
-        private volatile T _value;
-        public T Value => _value;
-
-        // This is a function that either returns the original T, or un updated, new T with new information (as T is immutable)
-        // This is how ImmutableInterlocked.TryAdd works
-        public T Swap(Func<T, T> factory)
-        {
-            T original, temp;
-            do
-            {
-                original = _value;
-                temp = factory(original);
-            }
-            // if the original is the same as temp, that means no new T was created by another thread, so you can safely return it
-            // exmample when you try to update an Atom<ImmutableDictionary<TKey,Tval>>. p.66
-
-            while (Interlocked.CompareExchange(ref _value, temp, original) != original);
-            return original;
-
-        }
-    }
 
 }
