@@ -92,7 +92,7 @@ namespace Concurrency
 
             //+ 6) Task and Functional Composition - Printing whether number is prime - Using Task composition and F#
             //! This is an over-engineered algorithm which prints whether a number is prime.
-            ConcurrencyC.FunctionalTaskExample(1023943);
+            //ConcurrencyC.FunctionalTaskExample(1023943);
 
             Console.ReadLine();
 
